@@ -4,6 +4,7 @@ from direct.task import Task
 from panda3d.core import Vec3
 from collideObjectBase import *
 from typing import Callable
+from direct.gui.OnscreenImage import OnscreenImage
 
 class Planet(SphereCollideObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
@@ -55,6 +56,7 @@ class Player(SphereCollideObject):
         self.taskManager = task
         self.render = render
         self.accept = accept
+        self.loader = loader
 
         self.modelNode.setPos(posVec)
         self.modelNode.setScale(scaleVec)
@@ -67,7 +69,30 @@ class Player(SphereCollideObject):
         self.reloadTime = .25
         self.missileDistance= 4000
         self.missileBay = 1
-    
+
+        self.taskManager.add(self.CheckIntervals, 'checkMissiles', 34)
+        self.EnableHUD()
+
+    def EnableHUD(self):
+        self.hud = OnscreenImage(image = "./Assets/Hud/Reticle3b.png", pos = Vec3(0, 0, 0), scale = 0.1)
+        self.hud.setTransparency(TransparencyAttrib.MAlpha)
+
+    def CheckIntervals(self, task):
+        for i in Missile.Intervals:
+            if not Missile.Intervals[i].isPlaying():
+                Missile.cNodes[i].detachNode()
+                Missile.fireModels[i].detachNode()
+                del Missile.Intervals[i]
+                del Missile.fireModels[i]
+                del Missile.cNodes[i]
+                del Missile.collisionSolids[i]
+                print (i + ' has reached the end of its fire solution.')
+                break
+        return Task.cont
+
+
+
+
     def Thrust(self, Keydown):
         if Keydown:
             self.taskManager.add(self.ApplyThrust, 'forward-thrust')
@@ -164,6 +189,16 @@ class Player(SphereCollideObject):
         self.modelNode.setR(self.modelNode.getR() - rate)
         return Task.cont
     
+    def Reload(self, task):
+        if task.time > self.reloadTime:
+            self.missileBay += 1
+            if self.missileBay > 1:
+                self.missileBay = 1
+                print("Reload complete.")
+                return Task.done
+        elif task.time <= self.reloadTime:
+            print("Reload proceeding...")
+            return Task.cont
     def Fire(self):
         if self.missileBay:
             travRate = self.missileDistance
@@ -179,11 +214,15 @@ class Player(SphereCollideObject):
 
             posVec = self.modelNode.getPos() + InFront 
 
-            currentMissile = Missile(self.loader, './assets/phaser/phaser.egg', self.render, tag, posVec, 4.0)
+            currentMissile = Missile(self.loader, './Assets/phaser/phaser.egg', self.render, tag, posVec, 4.0)
 
             Missile.Intervals[tag] = currentMissile.modelNode.posInterval(2.0, travVec, startPos = posVec, fluid = 1)
             Missile.Intervals[tag].start()
-    
+        else:
+            if not self.taskManager.hasTaskNamed('reload'):
+                print('initializing reload...')
+                self.taskManager.doMethodLater(0, self.Reload, 'reload')
+                return Task.cont
 class Missile(SphereCollideObject):
     fireModels = {}
     cNodes = {}

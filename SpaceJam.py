@@ -25,6 +25,7 @@ class myApp(ShowBase):
         self.disableMouse()
         self.camera.reparentTo(self.Player.modelNode)
         self.camera.setFluidPos(0, 1, 0)
+        
 
     def DrawCloudDefense(self, centralObject, droneName): 
         unitVec = DefensePaths.Cloud()
