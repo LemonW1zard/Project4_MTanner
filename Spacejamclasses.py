@@ -223,6 +223,7 @@ class Player(SphereCollideObject):
                 print('initializing reload...')
                 self.taskManager.doMethodLater(0, self.Reload, 'reload')
                 return Task.cont
+            
 class Missile(SphereCollideObject):
     fireModels = {}
     cNodes = {}

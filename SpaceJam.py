@@ -4,6 +4,9 @@ import DefensePaths as DefensePaths
 from panda3d.core import *
 from collideObjectBase import PlacedObject
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher
+from direct.particles.ParticleEffect import ParticleEffect
+
+
 # Space Jam.py
 # Micah Tanner
 # 02/11/2024
@@ -18,6 +21,7 @@ class myApp(ShowBase):
         self.cTrav.traverse(self.render)
         self.pusher = CollisionHandlerPusher()
         self.cTrav.showCollisions(self.render)
+
         self.pusher.addCollider(self.Player.collisionNode, self.Player.modelNode)
         self.cTrav.addCollider(self.Player.collisionNode, self.pusher)
 
@@ -25,7 +29,6 @@ class myApp(ShowBase):
         self.disableMouse()
         self.camera.reparentTo(self.Player.modelNode)
         self.camera.setFluidPos(0, 1, 0)
-        
 
     def DrawCloudDefense(self, centralObject, droneName): 
         unitVec = DefensePaths.Cloud()
@@ -84,6 +87,7 @@ class myApp(ShowBase):
         self.Station = Spacejamclasses.Station(self.loader, "./Assets/Space-Station/spaceStation.x", self.render, 'Station', "./Assets/Space-Station/SpaceStation.png", (-3000, -3000, 67), 50)
 
         fullCycle = 60
+        self.SetCamera()
         for j in range(fullCycle):
             Spacejamclasses.Drone.droneCount += 1
             nickName = "Drone" + str(Spacejamclasses.Drone.droneCount)
@@ -92,7 +96,6 @@ class myApp(ShowBase):
             self.DrawAxisDronesXY(self.Planet3, nickName)
             self.DrawAxisDronesXZ(self.Planet3, nickName)
             self.DrawAxisDronesYZ(self.Planet3, nickName)
-            self.SetCamera()
 
 
 
