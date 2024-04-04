@@ -16,15 +16,14 @@ class myApp(ShowBase):
     
     def __init__(self):
         ShowBase.__init__(self)
-        self.Scene()
-        self.cTrav = CollisionTraverser()
+        self.traverser = CollisionTraverser()
+        self.cTrav = self.traverser
         self.cTrav.traverse(self.render)
         self.pusher = CollisionHandlerPusher()
         self.cTrav.showCollisions(self.render)
-
+        self.Scene()
         self.pusher.addCollider(self.Player.collisionNode, self.Player.modelNode)
-        self.cTrav.addCollider(self.Player.collisionNode, self.pusher)
-
+        self.traverser.addCollider(self.Player.collisionNode, self.pusher)
     def SetCamera(self):
         self.disableMouse()
         self.camera.reparentTo(self.Player.modelNode)
@@ -83,7 +82,7 @@ class myApp(ShowBase):
         self.Planet4 = Spacejamclasses.Planet(self.loader, "./Assets/Planets/redPlanet.x", self.render, 'Planet4', "./Assets/Planets/consumed-planet.jpg", (4000, 2000, 67), 350)
         self.Planet5 = Spacejamclasses.Planet(self.loader, "./Assets/Planets/redPlanet.x", self.render, 'Planet5', "./Assets/Planets/frozen-planet.jpg", (5000, 1000, 67), 350)
         self.Planet6 = Spacejamclasses.Planet(self.loader, "./Assets/Planets/redPlanet.x", self.render, 'Planet6', "./Assets/Planets/neutron-star.jpg", (-5000, -1000, 67), 350)
-        self.Player = Player.Player(self.loader, "./Assets/Player/hornetMini.x", self.render, 'Player', "./Assets/Player/hornetMini.jpg", (0, 0, 0), 50, self.task_mgr, self.render, self.accept, self.cTrav)
+        self.Player = Player.Player(self.loader, "./Assets/Player/hornetMini.x", self.render, 'Player', "./Assets/Player/hornetMini.jpg", (0, 0, 0), 50, self.task_mgr, self.render, self.accept)
         self.Station = Spacejamclasses.Station(self.loader, "./Assets/Space-Station/spaceStation.x", self.render, 'Station', "./Assets/Space-Station/SpaceStation.png", (-3000, -3000, 67), 50)
 
         fullCycle = 60

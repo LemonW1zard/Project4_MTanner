@@ -16,7 +16,7 @@ from panda3d.core import Vec3
 
 
 class Player(SphereCollideObject):
-    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, task, render, accept: Callable[[str, Callable], None], traverser: CollisionTraverser):
+    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, task, render, accept: Callable[[str, Callable], None]):
         super(Player, self).__init__(loader, modelPath, parentNode, nodeName, 0, 2)
         self.taskManager = task
         self.render = render
@@ -30,14 +30,15 @@ class Player(SphereCollideObject):
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
         self.SetKeyBindings()
-
+        self.SetParticles()
+        
         self.reloadTime = .25
         self.missileDistance= 4000
         self.missileBay = 1
 
         self.cntExplode = 0
         self.explodeIntervals = {}
-
+        
         self.traverser = CollisionTraverser()
         self.handler = CollisionHandlerEvent()
 
@@ -68,7 +69,7 @@ class Player(SphereCollideObject):
                 del Missile.cNodes[i]
                 del Missile.collisionSolids[i]
                 print (i + ' has reached the end of its fire solution.')
-                self.Explode(self.HandleInto)
+                #self.Explode(self.HandleInto)
                 break
         return Task.cont
 
@@ -195,7 +196,7 @@ class Player(SphereCollideObject):
             tag ='Missile' + str(Missile.missileCount)
 
             posVec = self.modelNode.getPos() + InFront 
-
+            self.traverser.traverse(self.render)
             currentMissile = Missile(self.loader, './Assets/phaser/phaser.egg', self.render, tag, posVec, 4.0)
 
             self.traverser.addCollider(currentMissile.collisionNode, self.handler)
@@ -237,7 +238,6 @@ class Player(SphereCollideObject):
         self.Explode(hitPosition)
     
     def Explode(self, impactPoint):
-        start = Vec3(0,0,0) + Vec3(impactPoint)
 
         self.cntExplode += 1
         tag = 'particles-' + str(self.cntExplode)
