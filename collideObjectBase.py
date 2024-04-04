@@ -15,7 +15,7 @@ class CollidableObject(PlacedObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str):
         super(CollidableObject, self).__init__(loader, modelPath, parentNode, nodeName)
 
-        self.collisionNode = self.modelNode.attachNewNode(CollisionNode(nodeName + 'cNode_'))
+        self.collisionNode = self.modelNode.attachNewNode(CollisionNode(nodeName + '_Cnode'))
         
 
 

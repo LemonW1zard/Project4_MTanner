@@ -5,7 +5,7 @@ from panda3d.core import *
 from collideObjectBase import PlacedObject
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher
 from direct.particles.ParticleEffect import ParticleEffect
-import Player
+from Player import myPlayer
 
 # Space Jam.py
 # Micah Tanner
@@ -82,7 +82,7 @@ class myApp(ShowBase):
         self.Planet4 = Spacejamclasses.Planet(self.loader, "./Assets/Planets/redPlanet.x", self.render, 'Planet4', "./Assets/Planets/consumed-planet.jpg", (4000, 2000, 67), 350)
         self.Planet5 = Spacejamclasses.Planet(self.loader, "./Assets/Planets/redPlanet.x", self.render, 'Planet5', "./Assets/Planets/frozen-planet.jpg", (5000, 1000, 67), 350)
         self.Planet6 = Spacejamclasses.Planet(self.loader, "./Assets/Planets/redPlanet.x", self.render, 'Planet6', "./Assets/Planets/neutron-star.jpg", (-5000, -1000, 67), 350)
-        self.Player =  Player.Player(self.loader, "./Assets/Player/hornetMini.x", self.render, 'Player', "./Assets/Player/hornetMini.jpg", (0, 0, 0), 50, self.task_mgr, self.render, self.accept, self.traverser)
+        self.Player =  myPlayer(self.loader, "./Assets/Player/hornetMini.x", self.render, 'Player', "./Assets/Player/hornetMini.jpg", (0, 0, 0), 50, self.task_mgr, self.render, self.accept, self.traverser)
         self.Station = Spacejamclasses.Station(self.loader, "./Assets/Space-Station/spaceStation.x", self.render, 'Station', "./Assets/Space-Station/SpaceStation.png", (-3000, -3000, 67), 50)
 
         fullCycle = 60

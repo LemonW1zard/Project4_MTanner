@@ -10,14 +10,14 @@ from direct.task import Task
 from typing import Callable
 from panda3d.core import *
 from panda3d.core import Vec3
-from SpaceJam import *
+#from SpaceJam import *
 
 
 
 
-class Player(SphereCollideObject):
+class myPlayer(SphereCollideObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, task, render, accept: Callable[[str, Callable], None], traverser):
-        super(Player, self).__init__(loader, modelPath, parentNode, nodeName, 0, 2)
+        super(myPlayer, self).__init__(loader, modelPath, parentNode, nodeName, 0, 2)
         self.taskManager = task
         self.render = render
         self.accept = accept
@@ -39,7 +39,7 @@ class Player(SphereCollideObject):
         self.cntExplode = 0
         self.explodeIntervals = {}
         
-        self.traverser = traverser()
+        self.traverser = traverser
         self.handler = CollisionHandlerEvent()
 
         self.handler.addInPattern('into')
@@ -193,7 +193,7 @@ class Player(SphereCollideObject):
             InFront = aim * 150
             travVec = fireSolution + self.modelNode.getPos()
             self.missileBay -= 1
-            tag ='Missile' + str(Missile.missileCount)
+            tag ='Missile-' + str(Missile.missileCount)
 
             posVec = self.modelNode.getPos() + InFront 
             self.traverser.traverse(self.render)
@@ -211,7 +211,7 @@ class Player(SphereCollideObject):
     def HandleInto(self, entry):
         fromNode = entry.getFromNodePath().getName()
         print("fromNode: " + fromNode)
-        intoNode = entry.getintoNodePath().getName()
+        intoNode = entry.getIntoNodePath().getName()
         print("intoNode: " + intoNode)
         intoPosition = Vec3(entry.getSurfacePoint(self.render))
         tempVar = fromNode.split('_')
