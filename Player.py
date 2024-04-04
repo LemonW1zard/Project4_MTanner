@@ -10,13 +10,13 @@ from direct.task import Task
 from typing import Callable
 from panda3d.core import *
 from panda3d.core import Vec3
-
+from SpaceJam import *
 
 
 
 
 class Player(SphereCollideObject):
-    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, task, render, accept: Callable[[str, Callable], None]):
+    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, task, render, accept: Callable[[str, Callable], None], traverser):
         super(Player, self).__init__(loader, modelPath, parentNode, nodeName, 0, 2)
         self.taskManager = task
         self.render = render
@@ -39,7 +39,7 @@ class Player(SphereCollideObject):
         self.cntExplode = 0
         self.explodeIntervals = {}
         
-        self.traverser = CollisionTraverser()
+        self.traverser = traverser()
         self.handler = CollisionHandlerEvent()
 
         self.handler.addInPattern('into')
