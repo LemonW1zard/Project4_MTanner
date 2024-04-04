@@ -8,10 +8,15 @@ from collideObjectBase import *
 from panda3d.core import CollisionTraverser, CollisionHandlerPusher, CollisionHandlerEvent
 from direct.task import Task
 from typing import Callable
+from panda3d.core import *
+from panda3d.core import Vec3
+
+
+
 
 
 class Player(SphereCollideObject):
-    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, task, render, accept: Callable[[str, Callable], None]):
+    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, task, render, accept: Callable[[str, Callable], None], traverser: CollisionTraverser):
         super(Player, self).__init__(loader, modelPath, parentNode, nodeName, 0, 2)
         self.taskManager = task
         self.render = render
@@ -42,6 +47,13 @@ class Player(SphereCollideObject):
         self.taskManager.add(self.CheckIntervals, 'checkMissiles', 34)
         self.EnableHUD()
 
+    def SetParticles(self):
+        base.enableParticles()
+        self.explodeEffect = ParticleEffect()
+        self.explodeEffect.loadConfig("./Assets/Particles/explosion.ptf")
+        self.explodeEffect.setScale(20)
+        self.explodeNode = self.render.attachNewNode('ExplosionEffects')
+
     def EnableHUD(self):
         self.hud = OnscreenImage(image = "./Assets/Hud/Reticle3b.png", pos = Vec3(0, 0, 0), scale = 0.1)
         self.hud.setTransparency(TransparencyAttrib.MAlpha)
@@ -56,6 +68,7 @@ class Player(SphereCollideObject):
                 del Missile.cNodes[i]
                 del Missile.collisionSolids[i]
                 print (i + ' has reached the end of its fire solution.')
+                self.Explode(self.HandleInto)
                 break
         return Task.cont
 
@@ -224,22 +237,18 @@ class Player(SphereCollideObject):
         self.Explode(hitPosition)
     
     def Explode(self, impactPoint):
+        start = Vec3(0,0,0) + Vec3(impactPoint)
+
         self.cntExplode += 1
         tag = 'particles-' + str(self.cntExplode)
 
-        self.explodeIntervals[tag] = LerpFunc(self.ExplodeLight, fromData = 0, toData = 0, duration = 4.0, extraArgs = [impactPoint])
+        self.explodeIntervals[tag] = LerpFunc(self.ExplodeLight, fromData = 0, toData = 1, duration = 4.0, extraArgs = [impactPoint])
         self.explodeIntervals[tag].start()
 
     def ExplodeLight(self, t, explosionPosition):
+
         if t == 1.0 and self.explodeEffect:
             self.explodeEffect.disable()
 
         elif t == 0:
             self.explodeEffect.start(self.explodeNode)
-
-    def SetParticles(self):
-        base.enableParticles()
-        self.explodeEffect = ParticleEffect()
-        self.explodeEffect.loadConfig("./Assets/Particles/explosion.ptf")
-        self.explodeEffect.setScale(20)
-        self.explodeNode = self.render.attachNewNode('ExplosionEffects')
