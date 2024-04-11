@@ -24,6 +24,7 @@ class myApp(ShowBase):
         self.Scene()
         self.pusher.addCollider(self.Player.collisionNode, self.Player.modelNode)
         self.traverser.addCollider(self.Player.collisionNode, self.pusher)
+        
     def SetCamera(self):
         self.disableMouse()
         self.camera.reparentTo(self.Player.modelNode)
@@ -84,7 +85,8 @@ class myApp(ShowBase):
         self.Planet6 = Spacejamclasses.Planet(self.loader, "./Assets/Planets/redPlanet.x", self.render, 'Planet6', "./Assets/Planets/neutron-star.jpg", (-5000, -1000, 67), 350)
         self.Player =  myPlayer(self.loader, "./Assets/Player/hornetMini.x", self.render, 'Player', "./Assets/Player/hornetMini.jpg", (0, 0, 0), 50, self.task_mgr, self.render, self.accept, self.traverser)
         self.Station = Spacejamclasses.Station(self.loader, "./Assets/Space-Station/spaceStation.x", self.render, 'Station', "./Assets/Space-Station/SpaceStation.png", (-3000, -3000, 67), 50)
-
+        self.Wanderer1 = Spacejamclasses.Wanderer(self.loader, "./Assets/Drones/DroneDefender.x", self.render, "Drone", 6.0, "./Assets/Drones/Drones.jpg", self.Player)
+        self.Wanderer2 = Spacejamclasses.Wanderer(self.loader, "./Assets/Drones/DroneDefender.x", self.render, "Drone", 6.0, "./Assets/Drones/Drones.jpg", self.Player)
         fullCycle = 60
         self.SetCamera()
         for j in range(fullCycle):

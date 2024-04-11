@@ -10,6 +10,7 @@ from direct.task import Task
 from typing import Callable
 from panda3d.core import *
 from panda3d.core import Vec3
+import random
 #from SpaceJam import *
 
 
@@ -226,6 +227,15 @@ class myPlayer(SphereCollideObject):
             Missile.Intervals[shooter].finish()
             print(victim, ' hit at ', intoPosition)
             self.DroneDestroy(victim, intoPosition)
+        
+        elif strippedString == "Planet":
+            Missile.Intervals[shooter].finish()
+            self.PlanetDestroy(victim)
+        
+        elif strippedString == "Station":
+            Missile.Intervals[shooter].finish()
+            self.SpaceStationDestroy(victim)
+
 
         else:
             Missile.Intervals[shooter].finish()
@@ -237,6 +247,41 @@ class myPlayer(SphereCollideObject):
         self.explodeNode.setPos(hitPosition)
         self.Explode(hitPosition)
     
+    def PlanetDestroy(self, victim: NodePath):
+        nodeID = self.render.find(victim)
+
+        self.taskManager.add(self.PlanetShrink, name = "PlanetShrink", extraArgs = [nodeID], appendTask = True)
+
+    def SpaceStationDestroy(self, victim: NodePath):
+        nodeID = self.render.find(victim)
+
+        self.taskManager.add(self.SpaceStationShrink, name = "SpaceStationShrink", extraArgs = [nodeID], appendTask = True)
+    
+    def SpaceStationShrink(self, nodeID: NodePath, task):
+        if task.time < 2.0:
+            if nodeID.getBounds().getRadius() > 0:
+                scaleSubtraction = 10
+                nodeID.setScale(nodeID.getScale() - scaleSubtraction)
+                temp = 30 * random.random()
+                nodeID.setH(nodeID.getH() + temp)
+                return task.cont
+            
+        else:
+            nodeID.detachNode()
+            return task.done
+
+    def PlanetShrink(self, nodeID: NodePath, task):
+        if task.time < 2.0:
+            if nodeID.getBounds().getRadius() > 0:
+                scaleSubtraction = 10
+                nodeID.setScale(nodeID.getScale() - scaleSubtraction)
+                temp = 30 * random.random()
+                nodeID.setH(nodeID.getH() + temp)
+                return task.cont
+            
+        else:
+            nodeID.detachNode()
+            return task.done
     def Explode(self, impactPoint):
 
         self.cntExplode += 1
